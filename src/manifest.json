@@ -21,7 +21,7 @@
     ],
     
     "page_action": {
-        "default_title": "test_title_12345",
+        "default_title": "battle_history_popup",
         "default_popup": "popup.html",
         "default_icon": "images/icon-38px.png",
         "show_matches": ["*://play.pokemonshowdown.com/*"]
