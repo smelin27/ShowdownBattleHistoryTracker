@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "Showdown! Battle History Tracker",
+    "version": "1.0",
+
+    "description": "This is my first browser extension and first actual code project so expect a lot of messing around with basic stuff to see what works. I'm hopefully getting it presentable as a minimum viable product before sharing it",
+    "homepage_url": "https://github.com/smelin27/ShowdownBattleHistoryTracker",
+
+    "icons": {
+        "48": "images/icon-48px.png",
+        "96": "images/icon-96px.png"
+    },
+
+    "permissions": ["activeTab"],
+
+    "content_scripts": [
+        {
+            "matches": ["*://play.pokemonshowdown.com/*"],
+            "js": ["showdown.js"]
+        }
+    ],
+    
+    "page_action": {
+        "default_title": "test_title_12345",
+        "default_popup": "popup.html",
+        "default_icon": "images/icon-38px.png",
+        "show_matches": ["*://play.pokemonshowdown.com/*"]
+    }
+}
