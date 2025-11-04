@@ -1,4 +1,5 @@
 {
+
     "manifest_version": 3,
     "name": "Showdown! Battle History Tracker",
     "version": "1.0",
@@ -11,7 +12,7 @@
         "96": "images/icon-96px.png"
     },
 
-    "permissions": ["activeTab"],
+    "permissions": ["activeTab", "storage"],
 
     "content_scripts": [
         {
