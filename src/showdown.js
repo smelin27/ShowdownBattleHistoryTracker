@@ -1,7 +1,8 @@
-console.log("Hello world!");
+// In the future this will be a script that reads console messages from Showdown and updates the extension's 
+// database when necessary.
 
-// generic error handler
-function onError(error) { console.log(error); }
+console.log("showdown.js running!");
+
 
 // add sample battle history
 // only run when changing or loading addon for the first time, otherwise leave commented out
@@ -15,10 +16,3 @@ browser.storage.local.set({
         "gen9ubers": [7, 8]
     }
 });
-
-
-
-let storageItem = browser.storage.local.get()
-storageItem.then((results) => {
-    console.log(results);
-}, onError);
