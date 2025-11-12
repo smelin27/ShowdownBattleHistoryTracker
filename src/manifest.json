@@ -4,7 +4,7 @@
     "name": "Showdown! Battle History Tracker",
     "version": "1.0",
 
-    "description": "This is my first browser extension and first actual code project so expect a lot of messing around with basic stuff to see what works. I'm hopefully getting it presentable as a minimum viable product before sharing it",
+    "description": "This is my first browser extension and my first actual code project outside of school/uni, so expect a lot of messing around with basic stuff to see what works. I'm hopefully getting it presentable as a minimum viable product before sharing it",
     "homepage_url": "https://github.com/smelin27/ShowdownBattleHistoryTracker",
 
     "icons": {
