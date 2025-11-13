@@ -21,8 +21,6 @@ browser.storage.local            (object)
 
 */
 
-// Only run this when changing or loading extension for the first time, otherwise leave it commented out
-
 browser.storage.local.set({
     "player1": {
         "gen9ou": [1, 2],
@@ -30,6 +28,7 @@ browser.storage.local.set({
     },
     "player2": {
         "gen9ou": [5, 6],
-        "gen9ubers": [7, 8]
+        "gen9ubers": [7, 8],
+        "gen9uu": [9, 10]
     }
 });
