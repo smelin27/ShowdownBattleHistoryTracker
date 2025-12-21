@@ -7,17 +7,17 @@ console.log("popup.js running!");
 function onError(error) { console.log(error); }
 
 // get data in storage
-let storageItem = browser.storage.local.get()
+let storageItem = browser.storage.local.get();
 storageItem.then((results) => {
     // test: print full battle history to console
     console.log(results);
-    // test: populate with player2 history
+    // test: display player2 history in popup
     populateTable(results.player2);
 }, onError);
 
 
-// function to populate table
-// input: player history object as described in showdown.js
+// function to populate table within the popup
+// input parameter: player history object as described in showdown.js
 function populateTable(opponent) {
     const table = document.getElementById("table");                 // Get table
     const playerName = document.getElementById("playerName");       // Get player name header (currently nonfunctional)
