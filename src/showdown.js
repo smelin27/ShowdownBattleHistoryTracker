@@ -1,5 +1,5 @@
-// This is run when the Showdown web page is opened. It listens for console messages and currently just stores the number
-// of messages received.
+// This is run when the Showdown web page is opened. It listens for console messages and updates the stored values for
+// user, opponent and format.
 // In the future it will update the database when a battle is won/lost.
 
 // Note for later: reloading the page during a battle will break the extension, since the battle log is loaded before the
@@ -129,8 +129,6 @@ For testing purposes. Remove in final version.
 object. JS object properties are key-value pairs, so the key is their username, and the value is another object, which
 stores history for each format as an integer array.
 
-This will most likely have to be changed in the future (username stored as object property to search through opponents list?)
-
 So the format is (with "key : value" for properties):
 
 browser.storage.local            (object)
@@ -146,7 +144,7 @@ browser.storage.local.set({
         "gen9ou": [1, 2],
         "gen9ubers": [3, 4]
     },
-    "player2": {
+    "edfe": {
         "gen9randbats": [0, 0],
         "gen9ou": [5, 6],
         "gen9ubers": [7, 8],
