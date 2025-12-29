@@ -1,11 +1,11 @@
-// This is run when the Showdown web page is opened. It listens for console messages and updates the stored values for
-// user, opponent and format.
-// In the future it will update the database when a battle is won/lost.
+// This is run when the Showdown web page is opened. It listens for console messages, updates the stored values for user, opponent and format, and records wins/losses in the database.
 
 // Note for later: reloading the page during a battle will break the extension, since the battle log is loaded before the
 // user account is connected, so user name is a guest account and neither battler is recognised as the user.
 // Pretty sure spectating a battle has the same result, so this needs to be fixed. Ignore result if neither p1 or p2 = username?
 // Being in multiple battles also breaks it.
+
+// Finally, the most pressing issue is that all other formats are overwritten when you finish a match.
 
 console.log("BATTLELOG: showdown.js running!");
 
@@ -105,11 +105,39 @@ window.addEventListener('message', (event) => {
     // set format
     // not sure "tier" is always arg 8. please test this
     if (message[8] && message[8] === "tier") {
-        const format = message[9];
+        const formatLen = message[9].length;
+        const format = message[9].substring(0, formatLen - 1); // remove newline character
         browser.storage.local.set({
             "_FORMAT": format
         });
         console.log("BATTLELOG: format is", format);
+    }
+
+
+    // record win/loss
+    if (message[2] === "win") {
+        let storageItem = browser.storage.local.get();
+        storageItem.then((results) => {
+            // get values
+            const user = results._USER;
+            const opponent = results._OPPONENT;
+            const format = results._FORMAT;
+            // check if history exists for this opponent & format, create 0-0 history and update storageItem if not
+            if (!results[opponent]) results[opponent] = {};
+            if (!results[opponent][format]) results[opponent][format] = [0, 0];
+            // get more values
+            let wins = results[opponent][format][0];
+            let losses = results[opponent][format][1];
+            // decide if user won or lost and update stored data
+            if (message[3] === user) wins += 1; // message[3] contains the winner
+            else losses += 1;
+            browser.storage.local.set({
+                [opponent]: {
+                    [format]: [wins, losses]
+                }
+            });
+            console.log("BATTLELOG results (hypothetically) updated!")
+        }, onError);
     }
 
     // print results after every message
@@ -139,15 +167,15 @@ browser.storage.local            (object)
 
 */
 
-browser.storage.local.set({
-    "player1": {
-        "gen9ou": [1, 2],
-        "gen9ubers": [3, 4]
-    },
-    "edfe": {
-        "gen9randbats": [0, 0],
-        "gen9ou": [5, 6],
-        "gen9ubers": [7, 8],
-        "gen9uu": [9, 10]
-    }
-});
+// browser.storage.local.set({
+//     "player1": {
+//         "gen9ou": [1, 2],
+//         "gen9ubers": [3, 4]
+//     },
+//     "edfe": {
+//         "[Gen 9] Random Battle": [0, 0],
+//         "gen9ou": [5, 6],
+//         "gen9ubers": [7, 8],
+//         "gen9uu": [9, 10]
+//     }
+// });
