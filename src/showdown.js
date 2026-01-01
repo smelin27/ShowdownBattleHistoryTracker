@@ -131,12 +131,9 @@ window.addEventListener('message', (event) => {
             // decide if user won or lost and update stored data
             if (message[3] === user) wins += 1; // message[3] contains the winner
             else losses += 1;
-            browser.storage.local.set({
-                [opponent]: {
-                    [format]: [wins, losses]
-                }
-            });
-            console.log("BATTLELOG results (hypothetically) updated!")
+            results[opponent][format] = [wins, losses];
+            browser.storage.local.set(results);
+            console.log("BATTLELOG results updated!")
         }, onError);
     }
 
