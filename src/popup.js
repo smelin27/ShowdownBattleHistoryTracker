@@ -1,7 +1,7 @@
 // This is run when popup.html is opened. It reads the extension's stored data for the current opponent and
 // updates popup.html with that data.
 
-console.log("popup.js running!");
+// console.log("popup.js running!"); // LOG
 
 // generic error handler
 function onError(error) { console.log(error); }
@@ -10,7 +10,7 @@ function onError(error) { console.log(error); }
 let storageItem = browser.storage.local.get();
 storageItem.then((results) => {
     // test: print full battle history to console
-    console.log(results);
+    // console.log(results);
     // display oppon history in popup
     populateTable(results._USER, results._OPPONENT, results[results._OPPONENT]);
 }, onError);
