@@ -16,7 +16,8 @@
 // generic error handler
 function onError(error) { console.log(error); }
 
-// console.log("BATTLELOG: showdown.js running!"); // LOG
+const doLogs = true; // set to true for testing
+if (doLogs) console.log("BATTLELOG: showdown.js running!"); // LOG
 
 
 /*
@@ -73,7 +74,7 @@ window.addEventListener('message', (event) => {
             "_OPPONENT": null,
             "_FORMAT": null
         });
-        // console.log("BATTLELOG: temporary data cleared."); // LOG
+        if (doLogs) console.log("BATTLELOG: temporary data cleared."); // LOG
     }
 
 
@@ -83,7 +84,7 @@ window.addEventListener('message', (event) => {
         browser.storage.local.set({
             "_USER": username
         });
-        // console.log("BATTLELOG: user is", username); // LOG
+        if (doLogs) console.log("BATTLELOG: user is", username); // LOG
     }
 
 
@@ -98,13 +99,14 @@ window.addEventListener('message', (event) => {
         // that message too.
 
         const checkingPlayerName = message[3];
-        // console.log("BATTLELOG: checking player", checkingPlayerName) // LOG
+        if (doLogs) console.log("BATTLELOG: checking player", checkingPlayerName) // LOG
 
         let storageItem = browser.storage.local.get();
         
         storageItem.then((results) => {
             if (checkingPlayerName !== results._USER) {
                 browser.storage.local.set({"_OPPONENT": checkingPlayerName});
+                if (doLogs) console.log("BATTLELOG: opponennt is", checkingPlayerName);
             }
         }, onError);
     }
@@ -117,7 +119,7 @@ window.addEventListener('message', (event) => {
         browser.storage.local.set({
             "_FORMAT": format
         });
-        // console.log("BATTLELOG: format is", format); // LOG
+        if (doLogs) console.log("BATTLELOG: format is", format); // LOG
     }
 
 
@@ -146,8 +148,8 @@ window.addEventListener('message', (event) => {
                 else losses += 1;
                 results[opponent][format] = [wins, losses];
                 browser.storage.local.set(results);
-                // console.log("BATTLELOG results updated!") // LOG
-                console.log(results);
+                if (doLogs) console.log("BATTLELOG results updated!") // LOG
+                if (doLogs) console.log(results);
             }
         }, onError);
     }

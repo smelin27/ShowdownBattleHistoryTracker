@@ -1,7 +1,8 @@
 // This is run when popup.html is opened. It reads the extension's stored data for the current opponent and
 // updates popup.html with that data.
 
-// console.log("popup.js running!"); // LOG
+const doLogs = true; // set to true for testing
+if (doLogs) console.log("popup.js running!"); // LOG
 
 // generic error handler
 function onError(error) { console.log(error); }
