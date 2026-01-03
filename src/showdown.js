@@ -71,9 +71,7 @@ window.addEventListener('message', (event) => {
         browser.storage.local.set({
             "_USER": null,
             "_OPPONENT": null,
-            "_FORMAT": null,
-            "_P1_IS_USER": false,
-            "_P2_IS_USER": false
+            "_FORMAT": null
         });
         // console.log("BATTLELOG: temporary data cleared."); // LOG
     }
@@ -96,13 +94,8 @@ window.addEventListener('message', (event) => {
         // This is necessary because the battle protocol (whose console messages we are reading) doesn't actually
         // describe which battler is the player, it just describes the current state of play.
 
-        // This block also contains the logic for checking if *neither* battler is the player, in which case we set
-        // _P1 and _P2 both to false, and the results of the battle will be ignored. This messing around is, again,
-        // necessary because we get the user's and opponent's name in different ways.
-
-        let checkingPlayerNumber;
-        if (message[2] == "p1") checkingPlayerNumber = 1;
-        else checkingPlayerNumber = 2;
+        // Joining a battle midway through sends the update message in a different format, so I need to work out how to parse
+        // that message too.
 
         const checkingPlayerName = message[3];
         // console.log("BATTLELOG: checking player", checkingPlayerName) // LOG
@@ -110,32 +103,9 @@ window.addEventListener('message', (event) => {
         let storageItem = browser.storage.local.get();
         
         storageItem.then((results) => {
-            // pretty sure this is inefficient code but I need it all laid out to make sense of it. might fix later
-            
-            if (checkingPlayerNumber === 1) {
-                if (results._USER === checkingPlayerName) {
-                    browser.storage.local.set({"_P1_IS_USER": true});
-                    // console.log("BATTLELOG p1 is user"); // LOG
-                }
-                else {
-                    browser.storage.local.set({"_P1_IS_USER": false});
-                    browser.storage.local.set({"_OPPONENT": checkingPlayerName});
-                    // console.log("BATTLELOG p1 not user"); // LOG
-                }
+            if (checkingPlayerName !== results._USER) {
+                browser.storage.local.set({"_OPPONENT": checkingPlayerName});
             }
-
-            else { // checkingPlayerNumber === 2
-                if (results._USER === checkingPlayerName) {
-                    browser.storage.local.set({"_P2_IS_USER": true})
-                    // console.log("BATTLELOG p2 is user"); // LOG
-                }
-                else {
-                    browser.storage.local.set({"_P2_IS_USER": false});
-                    browser.storage.local.set({"_OPPONENT": checkingPlayerName});
-                    // console.log("BATTLELOG p2 not user"); // LOG
-                }
-            }
-
         }, onError);
     }
 
@@ -160,19 +130,17 @@ window.addEventListener('message', (event) => {
             const opponent = results._OPPONENT;
             const format = results._FORMAT;
 
-            // Only continue if one of the battlers is the user. This prevents the script breaking if you load into an
-            // existing battle rather than starting a new one. Results that *should* be recorded might be ignored, so
-            // this is more of a bandaid fix than a real solution. Sorry.
+            // Ignore battle results if opponent is set to null, which happens in some edge cases.
+            if (results._OPPONENT !== null) { 
 
-            // check both P IS USER and whether OPPONENT is null because my code is stupid and inefficient and the trigger
-            // could be either of these. fuck my chungus life
-            if ((results._P1_IS_USER || results._P2_IS_USER) && results._OPPONENT !== null) { 
-                // check if history exists for this opponent & format, create 0-0 history and update storageItem if not
+                // check if history exists for this opponent & format, create 0 - 0 history if not
                 if (!results[opponent]) results[opponent] = {};
                 if (!results[opponent][format]) results[opponent][format] = [0, 0];
+
                 // get more values
                 let wins = results[opponent][format][0];
                 let losses = results[opponent][format][1];
+
                 // decide if user won or lost and update stored data
                 if (message[3] === user) wins += 1; // message[3] contains the winner
                 else losses += 1;
