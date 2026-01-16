@@ -124,34 +124,39 @@ window.addEventListener('message', (event) => {
 
 
     // record win/loss
-    if (message[2] === "win") {
-        let storageItem = browser.storage.local.get();
-        storageItem.then((results) => {
-            // get values
-            const user = results._USER;
-            const opponent = results._OPPONENT;
-            const format = results._FORMAT;
+    if (message[0].startsWith("<< >battle")) {
+        // "win" value may be in different indexes so we find it first
+        const winIndex = message.indexOf("win");
+        if (winIndex !== -1 && message[1] !== "c") { // this will trigger only if the chat room is a battle, the console message
+            // contains the battle's winner, AND it's not a chat message to prevent players from exploiting by typing "win|myName"
+            let storageItem = browser.storage.local.get();
+            storageItem.then((results) => {
+                // get values
+                const user = results._USER;
+                const opponent = results._OPPONENT;
+                const format = results._FORMAT;
 
-            // Ignore battle results if opponent is set to null, which happens in some edge cases.
-            if (results._OPPONENT !== null) { 
+                // Ignore battle results if opponent is set to null, which happens in some edge cases.
+                if (results._OPPONENT !== null) { 
 
-                // check if history exists for this opponent & format, create 0 - 0 history if not
-                if (!results[opponent]) results[opponent] = {};
-                if (!results[opponent][format]) results[opponent][format] = [0, 0];
+                    // check if history exists for this opponent & format, create 0 - 0 history if not
+                    if (!results[opponent]) results[opponent] = {};
+                    if (!results[opponent][format]) results[opponent][format] = [0, 0];
 
-                // get more values
-                let wins = results[opponent][format][0];
-                let losses = results[opponent][format][1];
+                    // get more values
+                    let wins = results[opponent][format][0];
+                    let losses = results[opponent][format][1];
 
-                // decide if user won or lost and update stored data
-                if (message[3] === user) wins += 1; // message[3] contains the winner
-                else losses += 1;
-                results[opponent][format] = [wins, losses];
-                browser.storage.local.set(results);
-                if (doLogs) console.log("BATTLELOG results updated!") // LOG
-                if (doLogs) console.log(results);
-            }
-        }, onError);
+                    // decide if user won or lost and update stored data
+                    if (message[winIndex + 1] === user) wins += 1; // message[3] contains the winner
+                    else losses += 1;
+                    results[opponent][format] = [wins, losses];
+                    browser.storage.local.set(results);
+                    if (doLogs) console.log("BATTLELOG results updated!") // LOG
+                    if (doLogs) console.log(results);
+                }
+            }, onError);
+        }
     }
 
     // print results after every message
