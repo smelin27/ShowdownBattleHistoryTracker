@@ -42,6 +42,8 @@ function populateTable(playerName, opponentName, history) {
         formatHeader.innerHTML = "Format"
         playerHeader.innerHTML = playerName;        // Display player name
         opponentHeader.innerHTML = opponentName;    // Display opponent name
+        let totalWins = 0;
+        let totalLosses = 0;
         for (const format in history) {             // Loop through formats played against opponent:
             let row = table.insertRow();                    // Create table row
             let formatName = row.insertCell(0);             // Create format name cell
@@ -50,6 +52,15 @@ function populateTable(playerName, opponentName, history) {
             formatName.innerHTML = format;                  // Set format name cell contents
             playerWins.innerHTML = history[format][0];      // Set player wins cell contents
             opponentWins.innerHTML = history[format][1];    // Set opponent wins cell contents
+            totalWins += history[format][0];                // Update total wins
+            totalLosses += history[format][1];              // Update total losses
         };
+        let topRow = table.insertRow(1);            // Add row at top for total wins/losses
+        let formatName = topRow.insertCell(0);      // Create "Total" cell with above cell naming scheme
+        let playerWins = topRow.insertCell(1);      // Create total player wins cell
+        let opponentWins = topRow.insertCell(2);    // Create total opponent wins cell
+        formatName.innerHTML = "<b>Total</b>";
+        playerWins.innerHTML = "<b>" + totalWins + "</b";
+        opponentWins.innerHTML = "<b>" + totalLosses + "</b>";
     }
 }
