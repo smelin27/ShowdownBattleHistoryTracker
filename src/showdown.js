@@ -7,10 +7,11 @@
 // Being in multiple battles causes all wins to be recorded for the most recent opponent. No fix for this yet.
 
 // Features to add:
-// Messages for "no opponent selected!" and "no history to display!" instead of a broken-looking popup.
-// Have formats appear in order? Alphabetical, relevance as listed on showdown main page, idk
-// Maybe - opponent search? Not just limited to most recent opponent
+// Total W-L at top of popup
+// Have formats appear in order? Alphabetical, order listed on format selector dropdown, idk
+// Maybe - page for full history against all opponents?
 // Maybe - keep notes on opponent? so I can call indy a smelly nerd
+// Auto open popup on battle start (don't think this is allowed in firefox, to prevent abuse)
 
 
 // generic error handler

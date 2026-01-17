@@ -21,18 +21,35 @@ storageItem.then((results) => {
 // input parameters:
     // opponent: player history object as described in showdown.js
 function populateTable(playerName, opponentName, history) {
-    const table = document.getElementById("table");                 // Get table
-    const playerHeader = document.getElementById("playerName");     // Get player name header
-    playerHeader.innerHTML = playerName;                            // Display player name
-    const opponentHeader = document.getElementById("opponentName"); // Get opponent name header
-    opponentHeader.innerHTML = opponentName;                        // Display opponent name
-    for (const format in history) {                                 // Loop through formats you've played against opponent:
-        let row = table.insertRow();                                    // Create table row
-        let formatName = row.insertCell(0);                             // Create format name cell
-        let playerWins = row.insertCell(1);                             // Create player wins cell
-        let opponentWins = row.insertCell(2);                           // Create opponent wins cell
-        formatName.innerHTML = format;                                  // Set format name cell contents
-        playerWins.innerHTML = history[format][0];                      // Set player wins cell contents
-        opponentWins.innerHTML = history[format][1];                    // Set opponent wins cell contents
-    };
+
+    // get table cells
+    const table = document.getElementById("table");                     // Get table
+    const formatHeader = document.getElementById("formatHeader");       // Get format header
+    const playerHeader = document.getElementById("playerHeader");       // Get player name header
+    const opponentHeader = document.getElementById("opponentHeader");   // Get opponent name header
+
+    if (opponentName === null) { // No opponent selected yet
+        formatHeader.innerHTML = "No opponent!";
+        playerHeader.innerHTML = '<img src="images/icon-38px.png"/>';
+    }
+
+    else if (!history) { // No battle history against current opponent
+        formatHeader.innerHTML = "No history against " + opponentName + "!";
+        playerHeader.innerHTML = '<img src="images/icon-38px.png"/>';
+    }
+
+    else {
+        formatHeader.innerHTML = "Format"
+        playerHeader.innerHTML = playerName;        // Display player name
+        opponentHeader.innerHTML = opponentName;    // Display opponent name
+        for (const format in history) {             // Loop through formats played against opponent:
+            let row = table.insertRow();                    // Create table row
+            let formatName = row.insertCell(0);             // Create format name cell
+            let playerWins = row.insertCell(1);             // Create player wins cell
+            let opponentWins = row.insertCell(2);           // Create opponent wins cell
+            formatName.innerHTML = format;                  // Set format name cell contents
+            playerWins.innerHTML = history[format][0];      // Set player wins cell contents
+            opponentWins.innerHTML = history[format][1];    // Set opponent wins cell contents
+        };
+    }
 }
