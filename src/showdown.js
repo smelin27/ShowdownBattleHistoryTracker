@@ -17,7 +17,7 @@
 function onError(error) { console.log(error); }
 
 const doLogs = true; // set to true for testing
-if (doLogs) console.log("BATTLELOG: showdown.js running!"); // LOG
+if (doLogs) console.debug("BATTLEHIST: showdown.js running!");
 
 
 /*
@@ -74,7 +74,7 @@ window.addEventListener('message', (event) => {
             "_OPPONENT": null,
             "_FORMAT": null
         });
-        if (doLogs) console.log("BATTLELOG: temporary data cleared."); // LOG
+        if (doLogs) console.debug("BATTLEHIST: temporary data cleared.");
     }
 
 
@@ -84,7 +84,7 @@ window.addEventListener('message', (event) => {
         browser.storage.local.set({
             "_USER": username
         });
-        if (doLogs) console.log("BATTLELOG: user is", username); // LOG
+        if (doLogs) console.debug("BATTLEHIST: user is", username);
     }
 
 
@@ -99,14 +99,14 @@ window.addEventListener('message', (event) => {
         // that message too.
 
         const checkingPlayerName = message[3];
-        if (doLogs) console.log("BATTLELOG: checking player", checkingPlayerName) // LOG
+        if (doLogs) console.debug("BATTLEHIST: checking player", checkingPlayerName)
 
         let storageItem = browser.storage.local.get();
         
         storageItem.then((results) => {
             if (checkingPlayerName !== results._USER) {
                 browser.storage.local.set({"_OPPONENT": checkingPlayerName});
-                if (doLogs) console.log("BATTLELOG: opponennt is", checkingPlayerName);
+                if (doLogs) console.debug("BATTLEHIST: opponent is", checkingPlayerName);
             }
         }, onError);
     }
@@ -119,7 +119,7 @@ window.addEventListener('message', (event) => {
         browser.storage.local.set({
             "_FORMAT": format
         });
-        if (doLogs) console.log("BATTLELOG: format is", format); // LOG
+        if (doLogs) console.debug("BATTLEHIST: format is", format);
     }
 
 
@@ -152,18 +152,12 @@ window.addEventListener('message', (event) => {
                     else losses += 1;
                     results[opponent][format] = [wins, losses];
                     browser.storage.local.set(results);
-                    if (doLogs) console.log("BATTLELOG results updated!") // LOG
-                    if (doLogs) console.log(results);
+                    if (doLogs) console.debug("BATTLEHIST results updated!")
+                    if (doLogs) console.debug(results);
                 }
             }, onError);
         }
     }
-
-    // print results after every message
-    // let storageItem = browser.storage.local.get();
-    // storageItem.then((results) => {
-    //     console.log("BATTLELOG player: " + results._USER + ", opponent: " + results._OPPONENT + ", format: " + results._FORMAT);
-    // }, onError);
 });
 
 
