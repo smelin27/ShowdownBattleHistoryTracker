@@ -29,19 +29,19 @@ function populateTable(playerName, opponentName, history) {
     const opponentHeader = document.getElementById("opponentHeader");   // Get opponent name header
 
     if (opponentName === null) { // No opponent selected yet
-        formatHeader.innerHTML = "No opponent!";
+        formatHeader.innerText = "No opponent!";
         playerHeader.innerHTML = '<img src="images/icon-38px.png"/>';
     }
 
     else if (!history) { // No battle history against current opponent
-        formatHeader.innerHTML = "No history against " + opponentName + "!";
-        playerHeader.innerHTML = '<img src="images/icon-38px.png"/>';
+        formatHeader.innerText = "No history against " + opponentName + "!";
+        playerHeader.innerText = '<img src="images/icon-38px.png"/>';
     }
 
     else {
-        formatHeader.innerHTML = "Format"
-        playerHeader.innerHTML = playerName;        // Display player name
-        opponentHeader.innerHTML = opponentName;    // Display opponent name
+        formatHeader.innerText = "Format"
+        playerHeader.innerText = playerName;        // Display player name
+        opponentHeader.innerText = opponentName;    // Display opponent name
         let totalWins = 0;
         let totalLosses = 0;
         for (const format in history) {             // Loop through formats played against opponent:
@@ -49,9 +49,9 @@ function populateTable(playerName, opponentName, history) {
             let formatName = row.insertCell(0);             // Create format name cell
             let playerWins = row.insertCell(1);             // Create player wins cell
             let opponentWins = row.insertCell(2);           // Create opponent wins cell
-            formatName.innerHTML = format;                  // Set format name cell contents
-            playerWins.innerHTML = history[format][0];      // Set player wins cell contents
-            opponentWins.innerHTML = history[format][1];    // Set opponent wins cell contents
+            formatName.innerText = format;                  // Set format name cell contents
+            playerWins.innerText = history[format][0];      // Set player wins cell contents
+            opponentWins.innerText = history[format][1];    // Set opponent wins cell contents
             totalWins += history[format][0];                // Update total wins
             totalLosses += history[format][1];              // Update total losses
         };
