@@ -1,8 +1,8 @@
 // This is run when popup.html is opened. It reads the extension's stored data for the current opponent and
 // updates popup.html with that data.
 
-const doLogs = true; // set to true for testing
-if (doLogs) console.log("popup.js running!"); // LOG
+const doLogs = false; // set to true for testing
+if (doLogs) console.debug("popup.js running!");
 
 // generic error handler
 function onError(error) { console.log(error); }
@@ -12,7 +12,8 @@ let storageItem = browser.storage.local.get();
 storageItem.then((results) => {
     // test: print full battle history to console
     // console.log(results);
-    // display oppon history in popup
+    
+    // display opponent history in popup
     populateTable(results._USER, results._OPPONENT, results[results._OPPONENT]);
 }, onError);
 
