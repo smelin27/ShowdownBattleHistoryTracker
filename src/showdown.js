@@ -66,13 +66,17 @@ window.addEventListener('message', (event) => {
         // [1]: message type (e.g. start, updateuser)
         // [2+]: other args (may not exist)
 
+    if (message[1] == "c") return; // Ignore chat messages
+
 
     // clear data on first loading showdown webpage
     if (message[1] === "/autojoin ") {
         browser.storage.local.set({
             "_USER": null,
             "_OPPONENT": null,
-            "_FORMAT": null
+            "_FORMAT": null,
+            "_P1": null,
+            "_P2": null
         });
         if (doLogs) console.debug("BATTLEHIST: temporary data cleared.");
     }
@@ -88,27 +92,45 @@ window.addEventListener('message', (event) => {
     }
 
 
-    // check both battlers, set opponent name in storage
-    if (message[1] === "player") {
+    // pretty sure this code is unnecessarily messy as hell but whatever
+    if (message[0].startsWith("<< >battle")) { // check only messages in a battle room
         // The player names "p1" and "p2" are sent as different console messages. Here we check each of them against the
         // player name in storage.
         // This is necessary because the battle protocol (whose console messages we are reading) doesn't actually
         // describe which battler is the player, it just describes the current state of play.
 
-        // Joining a battle midway through sends the update message in a different format, so I need to work out how to parse
-        // that message too.
 
-        const checkingPlayerName = message[3];
-        if (doLogs) console.debug("BATTLEHIST: checking player", checkingPlayerName)
+        // check battlers, set each name in storage
+        let playerIndex = message.indexOf("player");
+        if (playerIndex !== -1 && message[playerIndex+1] === "p1") {
+            let checkingPlayerName = message[playerIndex+2];
+            browser.storage.local.set({"_P1": checkingPlayerName});
+            message.splice(playerIndex, 1); // remove first "player" item from array so we can check again for p2
+        }
+
+        playerIndex = message.indexOf("player");
+        if (playerIndex !== -1 && message[playerIndex+1] === "p2") {
+            let checkingPlayerName = message[playerIndex+2];
+            browser.storage.local.set({"_P2": checkingPlayerName});
+        }
 
         let storageItem = browser.storage.local.get();
-        
         storageItem.then((results) => {
-            if (checkingPlayerName !== results._USER) {
-                browser.storage.local.set({"_OPPONENT": checkingPlayerName});
-                if (doLogs) console.debug("BATTLEHIST: opponent is", checkingPlayerName);
+            // only set opponent if the user is in this battle, stops code from breaking when spectating
+            if (results._P1 === results._USER || results._P2 === results._USER) {
+                if (results._P1 !== results._USER) browser.storage.local.set({"_OPPONENT": results._P1});
+                else browser.storage.local.set({"_OPPONENT": results._P2});
             }
+            else browser.storage.local.set({"_OPPONENT": null});
         }, onError);
+
+        if (doLogs) {
+            let storageItem = browser.storage.local.get();
+            storageItem.then((results) => {
+                console.debug("BATTLEHIST: Opponent is", results._OPPONENT);
+            }, onError);
+        }
+
     }
 
     // set format
@@ -127,8 +149,7 @@ window.addEventListener('message', (event) => {
     if (message[0].startsWith("<< >battle")) {
         // "win" value may be in different indexes so we find it first
         const winIndex = message.indexOf("win");
-        if (winIndex !== -1 && message[1] !== "c") { // this will trigger only if the chat room is a battle, the console message
-            // contains the battle's winner, AND it's not a chat message to prevent players from exploiting by typing "win|myName"
+        if (winIndex !== -1) { // this will trigger only if the chat room is a battle and the console message announces a winner
             let storageItem = browser.storage.local.get();
             storageItem.then((results) => {
                 // get values
