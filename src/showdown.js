@@ -16,7 +16,7 @@
 // generic error handler
 function onError(error) { console.log(error); }
 
-const doLogs = true; // set to true for testing
+const doLogs = false; // set to true for testing
 if (doLogs) console.debug("BATTLEHIST: showdown.js running!");
 
 
@@ -94,6 +94,8 @@ window.addEventListener('message', (event) => {
 
     // pretty sure this code is unnecessarily messy as hell but whatever
     if (message[0].startsWith("<< >battle")) { // check only messages in a battle room
+
+
         // The player names "p1" and "p2" are sent as different console messages. Here we check each of them against the
         // player name in storage.
         // This is necessary because the battle protocol (whose console messages we are reading) doesn't actually
@@ -101,7 +103,7 @@ window.addEventListener('message', (event) => {
 
 
         // check battlers, set each name in storage
-        let playerIndex = message.indexOf("player");
+        let playerIndex = message.indexOf("player"); // index of "player" value, player number and name come after
         if (playerIndex !== -1 && message[playerIndex+1] === "p1") {
             let checkingPlayerName = message[playerIndex+2];
             browser.storage.local.set({"_P1": checkingPlayerName});
@@ -114,6 +116,8 @@ window.addEventListener('message', (event) => {
             browser.storage.local.set({"_P2": checkingPlayerName});
         }
 
+
+        // This will trigger every update but it makes everything breaking less likely
         let storageItem = browser.storage.local.get();
         storageItem.then((results) => {
             // only set opponent if the user is in this battle, stops code from breaking when spectating
@@ -131,22 +135,23 @@ window.addEventListener('message', (event) => {
             }, onError);
         }
 
-    }
-
-    // set format
-    // not sure "tier" is always arg 8. please test this
-    if (message[8] && message[8] === "tier") {
-        const formatLen = message[9].length;
-        const format = message[9].substring(0, formatLen - 1); // remove newline character
-        browser.storage.local.set({
-            "_FORMAT": format
-        });
-        if (doLogs) console.debug("BATTLEHIST: format is", format);
-    }
 
 
-    // record win/loss
-    if (message[0].startsWith("<< >battle")) {
+        // set format
+        const formatIndex = message.indexOf("tier"); // index of "tier" value, format name comes after
+        if (formatIndex !== -1) {
+            const formatLen = message[formatIndex+1].length;
+            const format = message[formatIndex+1].substring(0, formatLen-1); // remove newline character
+            browser.storage.local.set({
+                "_FORMAT": format
+            });
+            
+            if (doLogs) console.debug("BATTLEHIST: format is", format);
+        }
+
+
+        
+        // record win/loss
         // "win" value may be in different indexes so we find it first
         const winIndex = message.indexOf("win");
         if (winIndex !== -1) { // this will trigger only if the chat room is a battle and the console message announces a winner
@@ -178,8 +183,11 @@ window.addEventListener('message', (event) => {
                 }
             }, onError);
         }
+
+
     }
 });
+
 
 
 /*
