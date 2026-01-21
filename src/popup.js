@@ -36,7 +36,7 @@ function populateTable(playerName, opponentName, history) {
 
     else if (!history) { // No battle history against current opponent
         formatHeader.innerText = "No history against " + opponentName + "!";
-        playerHeader.innerText = '<img src="images/icon-38px.png"/>';
+        playerHeader.innerHTML = '<img src="images/icon-38px.png"/>';
     }
 
     else {
