@@ -60,8 +60,11 @@ function populateTable(playerName, opponentName, history) {
         let formatName = topRow.insertCell(0);      // Create "Total" cell with above cell naming scheme
         let playerWins = topRow.insertCell(1);      // Create total player wins cell
         let opponentWins = topRow.insertCell(2);    // Create total opponent wins cell
-        formatName.innerHTML = "<b>Total</b>";
-        playerWins.innerHTML = "<b>" + totalWins + "</b";
-        opponentWins.innerHTML = "<b>" + totalLosses + "</b>";
+        formatName.innerText = "Total";
+        formatName.style.fontWeight = "bold";
+        playerWins.innerText = totalWins;
+        playerWins.style.fontWeight = "bold";
+        opponentWins.innerText = totalLosses;
+        opponentWins.style.fontWeight = "bold";
     }
 }
