@@ -2,7 +2,7 @@
 
     "manifest_version": 3,
     "name": "Showdown! Battle History Tracker",
-    "version": "1.0",
+    "version": "1.0.1",
 
     "description": "An automated Pokémon Showdown battle history tracker, for displaying your results against opponents. Now with enough features to call it fully functional!",
     "homepage_url": "https://github.com/smelin27/ShowdownBattleHistoryTracker",

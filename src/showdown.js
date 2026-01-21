@@ -1,8 +1,5 @@
-// This is run when the Showdown web page is opened. It listens for console messages, updates the stored values for user, opponent and format, and records wins/losses in the database.
-
-// Note for later: reloading the page during a battle will break the extension, since the battle log is loaded before the
-// user account is connected, so user name is a guest account and neither battler is recognised as the user. In this case,
-// the battle result SHOULD be ignored, but I haven't extensively tested it. 
+// This is run when the Showdown web page is opened. It listens for console messages, updates the stored values for user, 
+// opponent and format, and records wins/losses in the database.
 
 // Being in multiple battles causes all wins to be recorded for the most recent opponent. No fix for this yet.
 
