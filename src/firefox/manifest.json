@@ -1,0 +1,37 @@
+{
+
+    "manifest_version": 3,
+    "name": "Showdown! Battle History Tracker",
+    "version": "1.0.3",
+
+    "description": "An automated Pokémon Showdown battle history tracker, for displaying your results against opponents. Now with enough features to call it fully functional!",
+    "homepage_url": "https://github.com/smelin27/ShowdownBattleHistoryTracker",
+
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "showdownbattlehistorytracker@smelin27",
+            "data_collection_permissions": {"required": ["none"]}
+        }
+    },
+
+    "icons": {
+        "48": "images/icon-48px.png",
+        "96": "images/icon-96px.png"
+    },
+
+    "permissions": ["activeTab", "storage"],
+
+    "content_scripts": [
+        {
+            "matches": ["*://play.pokemonshowdown.com/*"],
+            "js": ["showdown.js"]
+        }
+    ],
+    
+    "page_action": {
+        "default_title": "Showdown! Battle History Tracker",
+        "default_popup": "popup.html",
+        "default_icon": "images/icon-38px.png",
+        "show_matches": ["*://play.pokemonshowdown.com/*"]
+    }
+}
