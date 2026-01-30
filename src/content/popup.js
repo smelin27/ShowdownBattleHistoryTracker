@@ -7,8 +7,11 @@ if (doLogs) console.debug("popup.js running!");
 // generic error handler
 function onError(error) { console.log(error); }
 
+// get extension storage
+const ext = globalThis.browser ?? globalThis.chrome;
+
 // get data in storage
-let storageItem = browser.storage.local.get();
+let storageItem = ext.storage.local.get();
 storageItem.then((results) => {
     // test: print full battle history to console
     // console.log(results);

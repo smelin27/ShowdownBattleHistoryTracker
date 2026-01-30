@@ -24,7 +24,15 @@
     "content_scripts": [
         {
             "matches": ["*://play.pokemonshowdown.com/*"],
-            "js": ["showdown.js"]
+            "js": ["showdown.js"],
+            "run_at": "document_start"
+        }
+    ],
+
+    "web_accessible_resources": [
+        {
+            "resources": ["hook.js"],
+            "matches": ["*://play.pokemonshowdown.com/*"]
         }
     ],
     

@@ -1,5 +1,5 @@
-// This is run when the Showdown web page is opened. It listens for console messages, updates the stored values for user, 
-// opponent and format, and records wins/losses in the database.
+// This is run when the Showdown web page is opened. It listens for console messages, and acts upon them by updating the stored
+// global values and recording wins/losses in the database.
 
 // Being in multiple battles causes all wins to be recorded for the most recent opponent. No fix for this yet.
 
@@ -8,6 +8,7 @@
 // Maybe - page for full history against all opponents?
 // Maybe - keep notes on opponent? so I can call indy a smelly nerd
 // Auto open popup on battle start (don't think this is allowed in firefox, to prevent abuse)
+// Make Chrome popup formatting look nicer
 
 
 // generic error handler
@@ -16,6 +17,9 @@ function onError(error) { console.log(error); }
 const doLogs = false; // set to true for testing
 if (doLogs) console.debug("BATTLEHIST: showdown.js running!");
 
+// get extension storage
+const ext = globalThis.browser ?? globalThis.chrome;
+
 
 /*
 INJECT LISTENER HOOK TO READ CONSOLE MESSAGES
@@ -23,23 +27,16 @@ I won't lie to you I got this code off chatgpt because I couldn't find a decent 
 There's probably a better way to do this, because in my experience generative AI always gives you slightly inefficient code,
 but I don't know how I would do it.
 
-This code block creates a script that intercepts console messages, sends them to showdown.js with window.postMessage(),
-then sends it back to the browser console.
+This code block injects the script from hook.js into the web page.
 */
 
-const hookScript = document.createElement('script');
-hookScript.textContent = `
-    (function() {
-        const originalLog = console.log;
-        console.log = function(...args) {
-            // Send console messages to content script (showdown.js)
-            window.postMessage({ type: 'BATTLELOG', args: args }, '*');
-            originalLog.apply(console, args);
-        };
-    })();
-`;
-(document.head || document.documentElement).appendChild(hookScript);
-hookScript.remove();
+const script = document.createElement('script');
+script.src = ext.runtime.getURL('hook.js');
+script.type = 'text/javascript';
+
+script.onload = () =>  script.remove();
+(document.head || document.documentElement).appendChild(script);
+
 
 
 /*
@@ -68,7 +65,7 @@ window.addEventListener('message', (event) => {
 
     // clear data on first loading showdown webpage
     if (message[1] === "/autojoin ") {
-        browser.storage.local.set({
+        ext.storage.local.set({
             "_USER": null,
             "_OPPONENT": null,
             "_FORMAT": null,
@@ -82,7 +79,7 @@ window.addEventListener('message', (event) => {
     // set user name
     if (message[1] === "updateuser") {
         const username = message[2].trim();
-        browser.storage.local.set({
+        ext.storage.local.set({
             "_USER": username
         });
         if (doLogs) console.debug("BATTLEHIST: user is", username);
@@ -103,30 +100,30 @@ window.addEventListener('message', (event) => {
         let playerIndex = message.indexOf("player"); // index of "player" value, player number and name come after
         if (playerIndex !== -1 && message[playerIndex+1] === "p1") {
             let checkingPlayerName = message[playerIndex+2];
-            browser.storage.local.set({"_P1": checkingPlayerName});
+            ext.storage.local.set({"_P1": checkingPlayerName});
             message.splice(playerIndex, 1); // remove first "player" item from array so we can check again for p2
         }
 
         playerIndex = message.indexOf("player");
         if (playerIndex !== -1 && message[playerIndex+1] === "p2") {
             let checkingPlayerName = message[playerIndex+2];
-            browser.storage.local.set({"_P2": checkingPlayerName});
+            ext.storage.local.set({"_P2": checkingPlayerName});
         }
 
 
         // This will trigger every update but it makes everything breaking less likely
-        let storageItem = browser.storage.local.get();
+        let storageItem = ext.storage.local.get();
         storageItem.then((results) => {
             // only set opponent if the user is in this battle, stops code from breaking when spectating
             if (results._P1 === results._USER || results._P2 === results._USER) {
-                if (results._P1 !== results._USER) browser.storage.local.set({"_OPPONENT": results._P1});
-                else browser.storage.local.set({"_OPPONENT": results._P2});
+                if (results._P1 !== results._USER) ext.storage.local.set({"_OPPONENT": results._P1});
+                else ext.storage.local.set({"_OPPONENT": results._P2});
             }
-            else browser.storage.local.set({"_OPPONENT": null});
+            else ext.storage.local.set({"_OPPONENT": null});
         }, onError);
 
         if (doLogs) {
-            let storageItem = browser.storage.local.get();
+            let storageItem = ext.storage.local.get();
             storageItem.then((results) => {
                 console.debug("BATTLEHIST: Opponent is", results._OPPONENT);
             }, onError);
@@ -139,7 +136,7 @@ window.addEventListener('message', (event) => {
         if (formatIndex !== -1) {
             const formatLen = message[formatIndex+1].length;
             const format = message[formatIndex+1].substring(0, formatLen-1); // remove newline character
-            browser.storage.local.set({
+            ext.storage.local.set({
                 "_FORMAT": format
             });
             
@@ -152,7 +149,7 @@ window.addEventListener('message', (event) => {
         // "win" value may be in different indexes so we find it first
         const winIndex = message.indexOf("win");
         if (winIndex !== -1) { // this will trigger only if the chat room is a battle and the console message announces a winner
-            let storageItem = browser.storage.local.get();
+            let storageItem = ext.storage.local.get();
             storageItem.then((results) => {
                 // get values
                 const user = results._USER;
@@ -174,7 +171,7 @@ window.addEventListener('message', (event) => {
                     if (message[winIndex + 1] === user) wins += 1; // message[3] contains the winner
                     else losses += 1;
                     results[opponent][format] = [wins, losses];
-                    browser.storage.local.set(results);
+                    ext.storage.local.set(results);
                     if (doLogs) console.debug("BATTLEHIST results updated!")
                     if (doLogs) console.debug(results);
                 }
@@ -192,29 +189,29 @@ ADD SAMPLE BATTLE HISTORY
 
 For testing purposes. Remove in final version.
 
-"browser.storage.local" is a single JS object. The data for each player you've faced is stored as a property of that
+"ext.storage.local" is a single JS object. The data for each player you've faced is stored as a property of that
 object. JS object properties are key-value pairs, so the key is their username, and the value is another object, which
 stores history for each format as an integer array.
 
 So the format is (with "key : value" for properties):
 
-browser.storage.local            (object)
-    playerName : playerHistory     (string : object)
-        formatName : formatHistory   (string : int array)
-    playerName : playerHistory     (string : object)
-        formatName : formatHistory   (string : int array)
+ext.storage.local                   (object)
+    playerName : playerHistory          (string : object)
+        formatName : formatHistory          (string : int array)
+    playerName : playerHistory          (string : object)
+        formatName : formatHistory          (string : int array)
 
 */
 
-// browser.storage.local.set({
+// ext.storage.local.set({
 //     "player1": {
 //         "gen9ou": [1, 2],
 //         "gen9ubers": [3, 4]
 //     },
 //     "edfe": {
 //         "[Gen 9] Random Battle": [0, 0],
-//         "gen9ou": [5, 6],
-//         "gen9ubers": [7, 8],
-//         "gen9uu": [9, 10]
+//         "[Gen 9] OU": [5, 6],
+//         "[Gen 9] Ubers]": [7, 8],
+//         "[Gen 9] UU": [9, 10]
 //     }
 // });
