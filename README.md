@@ -13,6 +13,8 @@ Now published as an extension!
 Firefox: https://addons.mozilla.org/en-GB/firefox/addon/showdownbattlehistorytracker/  
 Chrome/Edge: Coming soon!
 
+To download and use it yourself from GitHub, download the code and run `build-chrome.bat` for Chromium browsers or `build-firefox.bat` for Firefox. This will create a `build-chrome` or `build-firefox` folder which can be loaded into your browser as an extension.
+
 Bug reports are very appreciated. At the moment, the extension *will* break if you're in multiple active battles at a time, counting wins incorrectly. I might fix it eventually but it would require a significant redesign, and I don't think being in multiple battles is that common anyway.
 
 I don't have a snappy name or icon yet. Suggestions welcome.
