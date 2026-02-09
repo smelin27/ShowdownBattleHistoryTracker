@@ -11,7 +11,8 @@ Currently in beta stage with barebones features. More coming Soon™.
 
 Now published as an extension!  
 Firefox: https://addons.mozilla.org/en-GB/firefox/addon/showdownbattlehistorytracker/  
-Chrome/Edge: Coming soon!
+Chrome: https://chromewebstore.google.com/detail/showdown-battle-history-t/jidhieeghcobdggacbfmkjgbjfadcdbj
+Edge/other browsers: Coming soon!
 
 To download and use it yourself from GitHub, download the code and run `build-chrome.bat` for Chromium browsers or `build-firefox.bat` for Firefox. This will create a `build-chrome` or `build-firefox` folder which can be loaded into your browser as an extension.
 
