@@ -1,7 +1,7 @@
 // This is run when the Showdown web page is opened. It listens for console messages, and acts upon them by updating the stored
 // global values and recording wins/losses in the database.
 
-// Being in multiple battles causes all wins to be recorded for the most recent opponent. No fix for this yet.
+// Being in multiple battles causes all records to be counted for the most recent opponent and format. No fix for this yet.
 
 // Features to add:
 // Have formats appear in order? Alphabetical, order listed on format selector dropdown, idk
@@ -23,8 +23,8 @@ const ext = globalThis.browser ?? globalThis.chrome;
 
 /*
 INJECT LISTENER HOOK TO READ CONSOLE MESSAGES
-I won't lie to you I got this code off chatgpt because I couldn't find a decent guide anywhere.
-There's probably a better way to do this, because in my experience generative AI always gives you slightly inefficient code,
+I won't lie to you I got this code (including hook.js) off chatgpt because I couldn't find a decent guide anywhere.
+There's possibly a better way to do it, because in my experience generative AI always gives you slightly inefficient code,
 but I don't know how I would do it.
 
 This code block injects the script from hook.js into the web page.
@@ -45,14 +45,14 @@ Full disclosure. The template for this is also from chatgpt.
 This code block receives console messages, sent with window.postMessage() from the previous code block, and processes them.
 
 User name, opponent name, and battle format are stored as "_USER", "_OPPONENT", and "_FORMAT" in the storage object. This
-can only track one battle at a time so being in multiple will (probably?) break the code.
-
+can only track one battle at a time so being in multiple will break the addon by having all records counted for the most
+recent opponent and format.
 */
 
 window.addEventListener('message', (event) => {
     // Ignore messages from other sources
     if (event.source !== window) return;
-    if (event.data.type !== 'BATTLELOG') return;
+    if (event.data.type !== 'BATTLEHIST') return;
 
     const message = event.data.args[0].split("|");
     // Message format:
@@ -64,7 +64,7 @@ window.addEventListener('message', (event) => {
 
 
     // clear data on first loading showdown webpage
-    if (message[1] === "/autojoin ") {
+    if (message[1].includes("/autojoin ")) {
         ext.storage.local.set({
             "_USER": null,
             "_OPPONENT": null,

@@ -3,7 +3,7 @@
 (function () {
     const originalLog = console.log;
     console.log = function (...args) {
-        window.postMessage({ type: 'BATTLELOG', args }, '*');
+        window.postMessage({ type: 'BATTLEHIST', args }, '*');
         originalLog.apply(console, args);
     };
 })();
