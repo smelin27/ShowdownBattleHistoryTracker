@@ -1,11 +1,15 @@
 // This is run when the Showdown web page is opened. It listens for console messages, and acts upon them by updating the stored
 // global values and recording wins/losses in the database.
+// I also use this file for general in-code documentation (to-do list and storage structure).
 
+// Bugs:
 // Being in multiple battles causes all records to be counted for the most recent opponent and format. No fix for this yet.
+// Joining a battle room which after it has ended, when one of the battlers was you, counts as losing a battle (for your
+// PREVIOUS opponent. What's going on there?). Might fix, might just let user manually edit.
 
 // Features to add:
-// Have formats appear in order? Alphabetical, order listed on format selector dropdown, idk
-// Maybe - page for full history against all opponents?
+// Page for full history against all opponents. Also allow editing?
+// Have formats appear in order? Alphabetical, order as listed on format selector dropdown, idk
 // Maybe - keep notes on opponent? so I can call indy a smelly nerd
 // Auto open popup on battle start (don't think this is allowed in firefox, to prevent abuse)
 // Make Chrome popup formatting look nicer
@@ -195,11 +199,15 @@ stores history for each format as an integer array.
 
 So the format is (with "key : value" for properties):
 
-ext.storage.local                   (object)
-    playerName : playerHistory          (string : object)
-        formatName : formatHistory          (string : int array)
-    playerName : playerHistory          (string : object)
-        formatName : formatHistory          (string : int array)
+ext.storage.local (object) {
+    playerName (string): playerHistory (object) {
+        formatName (string): formatHistory (int array)
+    }
+    playerName: playerHistory {
+        formatName: formatHistory
+    }
+    ...
+}
 
 */
 
