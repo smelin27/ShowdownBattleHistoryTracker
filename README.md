@@ -16,6 +16,8 @@ Edge/other browsers: Coming soon!
 
 To install the extension yourself, download the code and run `build-chrome.bat` for Chromium browsers or `build-firefox.bat` for Firefox. This will create a `build-chrome` or `build-firefox` folder which can be loaded into your browser as an extension.
 
+PLEASE NOTE: This addon will not work properly if its permission to read data is set to "Only when clicked". You may have to change this to "Always allow on play.pokemonshowdown.com" if the wrong opponent or no opponent appears in the popup while you are in a battle.
+
 Bug reports are very appreciated. At the moment, the extension *will* break if you're in multiple active battles at a time, counting wins incorrectly. I might fix it eventually but it would require a significant redesign, and I don't think being in multiple battles is that common anyway.
 
 I don't have a snappy name or icon yet. Suggestions welcome.
